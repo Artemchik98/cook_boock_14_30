@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
-from .models import Post, PostPoint,Comment
+from .models import Post, PostPoint,Comment,User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
 from  .forms import EmailPostForm,CommentForm
@@ -28,7 +28,9 @@ def post_list(request,tag_slug=None):
     except EmptyPage:
         posts=paginator.page(paginator.num_pages)
 
-
+    users=User.objects.all()
+    for u in users:
+        print(u.username)
 
     return render(request,'blog/post/list.html',
                   {'page':page,
