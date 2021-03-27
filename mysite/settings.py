@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ['coock-book-14-30.herokuapp.com','localhost','127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -40,11 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'blog.apps.BlogConfig',
     'taggit',
+    'bootstrapform',
+    'django.contrib.admin',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -52,7 +54,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 ROOT_URLCONF = 'mysite.urls'
@@ -86,9 +88,9 @@ DATABASES = {
     }
 }
 
-import dj_database_url
-db_from_env=dj_database_url.config()
-DATABASES['default'].update(db_from_env)
+# import dj_database_url
+# db_from_env=dj_database_url.config()
+# DATABASES['default'].update(db_from_env)
 
 
 # Password validation
@@ -135,8 +137,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 
 EMAIL_HOST='smtp.gmail.com'
-EMAIL_HOST_USER='artem.svistelnik@student.sumdu.edu.ua'
-EMAIL_HOST_PASSWORD='ZcniwEFzYb'
+EMAIL_HOST_USER='your email'
+EMAIL_HOST_PASSWORD='your password'
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
+
+LOGIN_REDIRECT_URL='blog:post_list'
+LOGIN_URL='blog:login'
+LOGOUT_URL='blog:logout'
 

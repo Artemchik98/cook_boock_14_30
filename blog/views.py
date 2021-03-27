@@ -1,16 +1,23 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render,redirect, get_object_or_404
 
 # Create your views here.
 from .models import Post, PostPoint,Comment,User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from  .forms import EmailPostForm,CommentForm
+from  .forms import EmailPostForm,CommentForm,LoginForm,PostAddForm,UserEditForm
 from  django.core.mail import send_mail
 from taggit.models import Tag
 from django.db.models import Count
 
+from django.http import HttpResponse
+from django.contrib.auth import authenticate,login
+from django.contrib.auth.decorators import login_required
+
+
 def post_list(request,tag_slug=None):
     object_list=Post.objects.all()
+
+
     tag=None
     print(tag)
 
@@ -19,7 +26,7 @@ def post_list(request,tag_slug=None):
                       slug=tag_slug)
         object_list=object_list.filter(
             tags__in=[tag])
-    paginator=Paginator(object_list,3)
+    paginator=Paginator(object_list,6)
     page=request.GET.get('page')
     try:
         posts=paginator.page(page)
@@ -29,31 +36,20 @@ def post_list(request,tag_slug=None):
         posts=paginator.page(paginator.num_pages)
 
     users=User.objects.all()
-    for u in users:
-        print(u.username)
 
     return render(request,'blog/post/list.html',
                   {'page':page,
                    'posts':posts,
                    'tag':tag})
 
-
-
-
-
-
-class PostListView(ListView):
-    queryset = Post.objects.all()
-    context_object_name = 'posts'
-    paginate_by = 3
-    template_name = 'blog/post/list.html'
-
-
-def post_detail(request, year, month, day, post):
+@login_required
+def post_detail(request, year, month, day,
+                post,post_id):
     post_object = get_object_or_404(Post, slug=post,#status='published',
                                     publish__year=year,
                                     publish__month=month,
-                                    publish__day=day)
+                                    publish__day=day,
+                                    id=post_id)
     comments=post_object.comments.filter(active=True)
     new_comment=None
     post_points = PostPoint.objects.filter(
@@ -62,9 +58,7 @@ def post_detail(request, year, month, day, post):
     if request.method=="POST":
         comment_form=CommentForm(data=request.POST)
         if comment_form.is_valid():
-            # new_comment=comment_form.save(commit=False)
-            # new_comment.post=post
-            # new_comment.save()
+
             cd=comment_form.cleaned_data
             new_comment=Comment(post=post_object,
                                 name=cd['name'],
@@ -89,7 +83,7 @@ def post_detail(request, year, month, day, post):
                    'comment_form':comment_form,
                    'similar_posts':similar_posts})
 
-
+@login_required
 def post_share(request,post_id):
     post=get_object_or_404(Post,id=post_id,
                        status='published')
@@ -114,9 +108,114 @@ def post_share(request,post_id):
                   {'post':post,
                    'form':form,
                    'sent':sent})
-#TODO: pip install django-taggit
-# python manage.py shell
-# >>> from blog.models import Post
-# >>> post=Post.objects.get(id=9)
-# >>> post.tags.add('супы','вкусняхи')
-# >>> post.tags.all()
+
+def user_login(request):
+    users = User.objects.all()
+    for u in users:
+        print(u.email)
+    if request.method=='POST':
+        form=LoginForm(request.POST)
+        if form.is_valid():
+            cd=form.cleaned_data
+            user=authenticate(request,
+                      username=cd['username'],
+                      password=cd['password'])
+            if user is not None:
+                if user.is_active:
+                    login(request,user)
+                    return HttpResponse(
+                        'Пользователь авторизирован')
+                else:
+                    return HttpResponse(
+                        'Аккаунт заблокирован')
+            else:
+                return HttpResponse('Неверные данные')
+    else:
+        form=LoginForm()
+    return render(request,
+                  'blog/account/login.html',
+                  {'form':form})
+
+@login_required
+def dashboard(request):
+    user=request.user
+    posts_pub=Post.objects.filter(author=user,
+                    status='published')
+    posts_draft = Post.objects.filter(author=user,
+                           status='draft')
+
+    return render(request,
+      'blog/account/dashboard.html',
+                  {'section':'dashboard',
+                   'posts_pub':posts_pub,
+                   'posts_draft':posts_draft})
+
+
+@login_required
+def post_add(request):
+    user=request.user
+    if request.method=='POST':
+        form=PostAddForm(request.POST,
+                 request.FILES)
+        if form.is_valid():
+            post=form.save(commit=False)
+            post.author=user
+            post.save()
+            for tag in form.cleaned_data['tags']:
+                post.tags.add(tag)
+
+    else:
+        form=PostAddForm()
+    return render(request,
+        'blog/account/post_add.html',
+                  {'form':form})
+
+
+@login_required
+def post_edit(request,post_id):
+    post=get_object_or_404(Post,id=post_id)
+    post_edit_form=PostAddForm(instance=post)
+    if request.method=='POST':
+        post_edit_form=PostAddForm(request.POST,
+                       instance=post)
+        if post_edit_form.is_valid():
+            post_edit_form.save()
+    return render(request,
+              'blog/account/post_edit.html',
+              {'form':post_edit_form})
+
+@login_required
+def post_delete(requst,post_id):
+    try:
+        post=get_object_or_404(Post,
+                   id=post_id)
+        post.delete()
+        return redirect('blog:dashboard')
+    except Post.DoesNotExist:
+        return redirect('blog:dashboard')
+
+@login_required
+def edit_profile(request):
+    user_form=UserEditForm(
+        instance=request.user)
+    if request.method=='POST':
+        user_form = UserEditForm(
+            request.POST,
+            instance=request.user)
+        if user_form.is_valid():
+            user_form.save()
+    return render(request,
+          'blog/account/profile.html',
+          {'user_form':user_form})
+
+@login_required
+def post_point_list(request,post_id):
+    post=get_object_or_404(Post,id=post_id)
+
+    post_points=PostPoint.objects.filter(
+        post=post)
+    return render(request,
+          'blog/account/post_points.html',
+              {'post':post,
+                'post_points':post_points})
+

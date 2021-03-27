@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from taggit.managers import TaggableManager
 
+from slugify import slugify
+
 class Post(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Draft'),
@@ -29,10 +31,18 @@ class Post(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('blog:post_detail', args=[self.publish.year,
-                                                 self.publish.month,
-                                                 self.publish.day,
-                                                 self.slug])
+        return reverse('blog:post_detail',
+                       args=[self.id,
+                             self.publish.year,
+                             self.publish.month,
+                             self.publish.day,
+                             self.slug])
+
+    def save(self ,*args,**kwargs):
+        self.slug=slugify(self.title)
+        return super(Post,self).save(*args,**kwargs)
+
+
 
 
 def save_image(instance, filename):
@@ -66,5 +76,3 @@ class Comment(models.Model):
         return 'Комментарий написан {} о {}'.format(
             self.name,self.post)
 
-    #TODO : python manage.py makemigrations
-    #TODO : python manage.py migrate
