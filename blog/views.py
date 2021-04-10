@@ -4,7 +4,7 @@ from django.shortcuts import render,redirect, get_object_or_404
 from .models import Post, PostPoint,Comment,User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from  .forms import EmailPostForm,CommentForm,LoginForm,PostAddForm,UserEditForm
+from  .forms import EmailPostForm,CommentForm,LoginForm,PostAddForm,UserEditForm,PostPointForm
 from  django.core.mail import send_mail
 from taggit.models import Tag
 from django.db.models import Count
@@ -15,7 +15,7 @@ from django.contrib.auth.decorators import login_required
 
 
 def post_list(request,tag_slug=None):
-    object_list=Post.objects.all()
+    object_list=Post.objects.filter(status='published')
 
 
     tag=None
@@ -148,7 +148,8 @@ def dashboard(request):
       'blog/account/dashboard.html',
                   {'section':'dashboard',
                    'posts_pub':posts_pub,
-                   'posts_draft':posts_draft})
+                   'posts_draft':posts_draft
+                  })
 
 
 @login_required
@@ -164,11 +165,12 @@ def post_add(request):
             for tag in form.cleaned_data['tags']:
                 post.tags.add(tag)
 
+            return redirect('blog:dashboard')
     else:
         form=PostAddForm()
-    return render(request,
+        return render(request,
         'blog/account/post_add.html',
-                  {'form':form})
+                  {'form':form,})
 
 
 @login_required
@@ -218,4 +220,48 @@ def post_point_list(request,post_id):
           'blog/account/post_points.html',
               {'post':post,
                 'post_points':post_points})
+
+
+@login_required
+def post_point_edit(request,post_point_id):
+    post_point=get_object_or_404(PostPoint,id=post_point_id)
+    post_point_edit_form=PostPointForm(instance=post_point)
+    if request.method=='POST':
+        post_point_edit_form=PostPointForm(request.POST,
+                                           instance=post_point)
+        if post_point_edit_form.is_valid():
+            post_point_edit_form.save()
+    return render(request,'blog/account/post_point_edit.html',
+                      {'form':post_point_edit_form})
+
+
+#TODO: форма поиска,
+#TODO: добавить  форму регитсрации,
+@login_required
+def post_point_delete(request,post_point_id):
+    try:
+        post_point=get_object_or_404(PostPoint,
+                   id=post_point_id)
+        post_point.delete()
+        return redirect('blog:post_point_list',post_id=post_point.post.id)
+    except PostPoint.DoesNotExist:
+        return redirect('blog:post_list')
+
+@login_required
+def post_point_add(request,post_id):
+    post=get_object_or_404(Post,id=post_id)
+    form = PostPointForm()
+
+    if request.method=='POST':
+        form=PostPointForm(request.POST,
+                 request.FILES)
+        if form.is_valid():
+            post_point=form.save(commit=False)
+            post_point.post=post
+            post_point.save()
+
+    return render(request,'blog/account/post_point_add.html',{'form':form})
+
+
+
 

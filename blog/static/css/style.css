@@ -79,6 +79,7 @@ p.date{
 .left-navbar h2{
     font-size: 30px;
     font-weight: bold;
+    color:#f3f7cc ;
 }
 .left-navbar li{
     padding: 10px;
@@ -110,4 +111,13 @@ nav{
 
 .logo-img{
     height: 60px
+}
+
+.account-content{
+    margin: 0 auto;
+}
+
+.add-point{
+    display: block;
+    margin: 0 auto;
 }

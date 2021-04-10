@@ -3,9 +3,15 @@
     Личный кабинет
 {% endblock %}
 {% block account_content %}
-<h2 class="text-center mb-4">
-    Этапы готовки рецепта "{{ post.title }}"
-</h2>
+    <div class="title-post-point-page">
+        <h2 class="text-center mb-4">
+            Этапы готовки рецепта "{{ post.title }}"
+        </h2>
+        <a class="btn btn-primary m-2 add-point" href="{% url 'blog:post_point_add' post.id %}">
+            Добавить этап
+        </a>
+    </div>
+
     <div class="card-deck">
         <div class="row row-cols-3 row-cols-md-3">
             {% for p_p in post_points %}
@@ -34,14 +40,13 @@
                         </div>
                         <div class="card-footer">
 
-                            <a class="btn btn-primary m-2" href="{% url 'blog:post_point_edit' post.id %}">Редактировать</a>
-                            <a class="btn btn-danger m-2" href="{% url 'blog:post_point_delete' post.id %}">Удалить</a></div>
+                            <a class="btn btn-primary m-2" href="{% url 'blog:post_point_edit' p_p.id %}">Редактировать</a>
+                            <a class="btn btn-danger m-2" href="{% url 'blog:post_point_delete' p_p.id %}">Удалить</a></div>
                         </div>
-                    </div>
                 </div>
             {% endfor %}
         </div>
-    
+    </div>
 
 
 

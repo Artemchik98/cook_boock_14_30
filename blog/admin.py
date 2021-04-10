@@ -3,7 +3,6 @@ from django.contrib import admin
 # Register your models here.
 from .models import Post, PostPoint,Comment
 
-#admin.site.register(Post) #TODO УДАЛИТь
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = ('id','title', 'slug', 'author', 'publish', 'status')

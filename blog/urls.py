@@ -11,8 +11,14 @@ urlpatterns = [
 
     path('<int:post_id>/<int:year>/<int:month>/<int:day>/<slug:post>/',
          views.post_detail, name='post_detail'),
-    path('<int:post_id>/share/',views.post_share,
+    path('share/<int:post_id>/',views.post_share,
          name='post_share'),
+
+    # path('<int:post_id>/share/',views.post_share,
+    #      name='post_share'),
+    #
+
+
     # path('login/',views.user_login,name='login')
 
     path('login/',auth_views.LoginView.as_view(),
@@ -34,6 +40,18 @@ urlpatterns = [
 
     path('post_point_list/<int:post_id>/',
          views.post_point_list,
-         name='post_point_list')
+         name='post_point_list'),
+
+    path('post_point_add/<int:post_id>/',
+         views.post_point_add,
+         name='post_point_add'),
+
+    path('post_point_edit/<int:post_point_id>/',
+         views.post_point_edit,
+         name='post_point_edit'),
+
+    path('post_point_delete/<int:post_point_id>/',
+         views.post_point_delete,
+         name='post_point_delete')
 
 ]

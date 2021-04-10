@@ -133,12 +133,12 @@ STATIC_URL = '/static/'
 STATIC_ROOT=os.path.join(BASE_DIR,'staticfiles')
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 EMAIL_HOST='smtp.gmail.com'
-EMAIL_HOST_USER='your email'
-EMAIL_HOST_PASSWORD='your password'
+EMAIL_HOST_USER='емейл'
+EMAIL_HOST_PASSWORD='ZcniwEFzYb'
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
 
