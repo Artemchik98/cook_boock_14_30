@@ -4,7 +4,7 @@ from django.shortcuts import render,redirect, get_object_or_404
 from .models import Post, PostPoint,Comment,User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from  .forms import EmailPostForm,CommentForm,LoginForm,PostAddForm,UserEditForm,PostPointForm
+from .forms import EmailPostForm,CommentForm,LoginForm,PostAddForm,UserEditForm,PostPointForm,SearchForm
 from  django.core.mail import send_mail
 from taggit.models import Tag
 from django.db.models import Count
@@ -15,12 +15,20 @@ from django.contrib.auth.decorators import login_required
 
 
 def post_list(request,tag_slug=None):
-    object_list=Post.objects.filter(status='published')
-
+    search_form=SearchForm()
+    query=None
+    if 'query' in request.GET:
+        search_form = SearchForm(request.GET)
+        if search_form.is_valid():
+            query=search_form.cleaned_data['query']
+            try:
+                object_list=Post.objects.filter(title__contains=query,status='published')
+            except:
+                print('not found')
+    else:
+        object_list = Post.objects.filter(status='published')
 
     tag=None
-    print(tag)
-
     if tag_slug:
         tag=get_object_or_404(Tag,
                       slug=tag_slug)
@@ -35,12 +43,11 @@ def post_list(request,tag_slug=None):
     except EmptyPage:
         posts=paginator.page(paginator.num_pages)
 
-    users=User.objects.all()
-
     return render(request,'blog/post/list.html',
                   {'page':page,
                    'posts':posts,
-                   'tag':tag})
+                   'tag':tag,
+                   'search_form':search_form})
 
 @login_required
 def post_detail(request, year, month, day,
@@ -263,5 +270,14 @@ def post_point_add(request,post_id):
     return render(request,'blog/account/post_point_add.html',{'form':form})
 
 
-
-
+def sign_up(request):
+    user_form=UserEditForm()
+    if request.method=='POST':
+        user_form=UserEditForm(request.POST)
+        if user_form.is_valid():
+            new_user=User.objects.create_user(**user_form.cleaned_data)
+            new_user.save()
+            login(request,authenticate(username=user_form.cleaned_data['username'],
+                                       password=user_form.cleaned_data['password']))
+            return redirect('blog:post_list')
+    return render(request,'registration/sign_up.html',{'user_form':user_form})

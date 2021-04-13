@@ -60,10 +60,14 @@ class PostAddForm(forms.ModelForm):
                 'image','tags')
 
 class UserEditForm(forms.ModelForm):
+    password=forms.CharField(max_length=40,widget=forms.PasswordInput())
     class Meta:
         model=User
         fields=('first_name','last_name',
-                'username','email')
+                'username','email','password')
+
+
+
 
 class PostPointForm(forms.ModelForm):
     class Meta:
@@ -71,4 +75,10 @@ class PostPointForm(forms.ModelForm):
         fields=('post_point_header','post_point_text','post_image')
 
 
-
+class SearchForm(forms.Form):
+    query=forms.CharField(widget=forms.TextInput(attrs={
+        'class':'form-control mr-sm-2',
+        'type':'search',
+        'placeholder':'Search',
+        'aria-label':'Search'
+    }))

@@ -52,6 +52,8 @@ urlpatterns = [
 
     path('post_point_delete/<int:post_point_id>/',
          views.post_point_delete,
-         name='post_point_delete')
+         name='post_point_delete'),
+
+    path('sign-up/',views.sign_up,name='sign-up'),
 
 ]
