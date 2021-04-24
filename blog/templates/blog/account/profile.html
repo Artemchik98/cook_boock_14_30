@@ -5,14 +5,19 @@
 {% endblock %}
 {% block account_content %}
     <div class="container text-center sign-in">
-        {% if form.errors %}
-            <p>{{ form.errors }}</p>
+        {% if user_form.errors %}
+            <p>{{ user_form.errors }}</p>
                 <p>Что-то забыл</p>
-            {% else %}
-                <h1 class="h3 mb-3 font-weight-normal">
-                    Пожалуйста заполните поля
-                </h1>
-            {% endif %}
+        {% elif user_form.is_valid  %}
+            <h1 class="h3 mb-3 font-weight-normal">
+                Данные профиля успешно изменнены
+            </h1>
+            <a href="{% url 'blog:dashboard' %}" class="btn btn-dark mb-4">Вернуться к списку ваших постов</a>
+        {% else %}
+            <h1 class="h3 mb-3 font-weight-normal">
+                Пожалуйста заполните поля
+            </h1>
+        {% endif %}
         <form action="." class="form-sign-in login-form"
               method="post" enctype="multipart/form-data"
         >

@@ -126,3 +126,6 @@ nav{
 .mb_my{
     margin-bottom: 100px;
 }
+.search-form label{
+    display: none;
+}
