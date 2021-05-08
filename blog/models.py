@@ -23,6 +23,7 @@ class Post(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft', verbose_name='Статус публикации')
     image = models.ImageField(upload_to='product_images/', blank=False, verbose_name='Изображение')
     tags=TaggableManager()
+    favourite = models.ManyToManyField(User, related_name='fav_posts', blank=True)
 
     class Meta:
         ordering = ('-publish',)

@@ -56,4 +56,15 @@ urlpatterns = [
 
     path('sign-up/',views.sign_up,name='sign-up'),
 
+    path('favourite-posts/',views.favourite_posts,name='favourite_posts'),
+    path('add_to_favourite/<int:post_id>/',views.add_to_favourite,name='add_to_favourite'),
+
+    path('delete_from_favourite/<int:post_id>/', views.delete_from_favourite,
+         name='delete_from_favourite'),
+
+    path('delete_from_favourite_in_dashboard/<int:post_id>/',
+         views.delete_from_favourite_in_dashboard,
+         name='delete_from_favourite_in_dashboard'),
+
+
 ]

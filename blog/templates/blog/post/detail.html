@@ -1,4 +1,7 @@
 {% extends 'blog/base.html' %}
+{% load static %}
+{% load  bootstrap %}
+
 {% block title %}
     {{ post.title }}
 {% endblock %}
@@ -8,7 +11,21 @@
     <div class="container my-3">
         <div class="card-deck">
             <div class="card">
-                <img src="{{ MEDIA_URL }}{{ post.image.url }}" class="card-img-top" alt="...">
+                <div class="row">
+                        <img src="{{ MEDIA_URL }}{{ post.image.url }}" class="card-img-top detail-image-size" alt="...">
+
+                        <div class="favourite">
+                            {% if post in request.user.fav_posts.all%}
+                                <a href="{% url 'blog:delete_from_favourite' post.id %}">
+                                    <img src="{% static 'img/star_yellow.png' %}" alt="">
+                                </a>
+                            {% else %}
+                                <a href="{% url 'blog:add_to_favourite' post.id %}">
+                                    <img src="{% static 'img/star_empty.png' %}" alt="">
+                                </a>
+                            {% endif %}
+                        </div>
+                 </div>
                 <div class="card-body">
                     <h5 class="card-title">{{ post.title }}</h5>
                     <span>
@@ -36,19 +53,31 @@
                 <div class="card-footer">
                     <small class="text-muted">Опубликовано {{ post.publish }}. Автор {{ post.author }}</small>
                 </div>
-                
-                <h2>Похожие статьи</h2>
-                {% for post in similar_posts %}
-                    <p>
-                        <a href="{{post.get_absolute_url}}">
-                            {{ post.title }}
-                        </a>
-                    </p>
-                {% empty %}
-                    <p>Нет похожих статей</p>
-                {% endfor %}
-                
+
             
+            
+
+                {% if similar_posts %}
+                    <h2 class="text-center mb-3">Похожие статьи</h2>
+                    <div class="row row-cols-1 row-cols-md-3">
+                        {% for post in similar_posts %}
+                              <div class="col mb-4">
+                                <div class="card h-100">
+                                  <img src="{{ MEDIA_URL }}{{ post.image.url }}" class="card-img-top" alt="...">
+                                  <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a href="{{post.get_absolute_url}}">
+                                            {{ post.title|truncatechars:70 }}
+                                        </a>
+                                    </h5>
+                                  </div>
+                                </div>
+                              </div>
+                        {% empty %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
             
                 {% with comments.count as total_comments  %}
                     <h2 class="text-center">
@@ -67,32 +96,25 @@
                     {% if new_comment %}
                         <h2>Ваш комментарий добавлен</h2>
                     {% else %}
-                        <h2>Добавить комментарий</h2>
-                        <form action="." method="post">
-                            <div class="form-group">
-                                <label for="nameInput">
-                                    Имя
-                                </label>
-                                {{ comment_form.name }}
-                            </div>
-                             <div class="form-group">
-                                <label for="emailInput">
-                                    Email
-                                </label>
-                                {{ comment_form.email }}
-                            </div>
-                            <div class="form-group">
-                                    <label for="comment">
-                                        Комментарий
-                                    </label>
-                                    {{ comment_form.body }}
-                            </div>
-                            <button type="submit"
-                                    class="btn btn-primary">
-                                Добавить комментарий
-                            </button>
-                            {% csrf_token %}
-                        </form>
+                        <h2 class="text-center">Добавить комментарий</h2>
+
+
+                        <div class="container">
+                            <form action="." method="post">
+                                {{ comment_form.name|bootstrap }}
+                                {{ comment_form.email|bootstrap }}
+                                {{ comment_form.body|bootstrap }}
+
+                                <button type="submit"
+                                        class="btn btn-primary">
+                                    Добавить комментарий
+                                </button>
+                                {% csrf_token %}
+                            </form>
+                        </div>
+
+
+
                     {% endif %}
                 </div>
             </div>

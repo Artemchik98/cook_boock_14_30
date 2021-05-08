@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 
 
 def post_list(request,tag_slug=None):
+
     search_form=SearchForm()
     query=None
     if 'query' in request.GET:
@@ -75,6 +76,7 @@ def post_detail(request, year, month, day,
 
     post_tags_ids=post_object.tags.values_list('id',flat=True)
     similar_posts = Post.objects.filter(
+        status='published',
         tags__in=post_tags_ids).exclude(
         id=post_object.id)
     similar_posts = similar_posts.annotate(
@@ -284,3 +286,31 @@ def sign_up(request):
                                        password=user_form.cleaned_data['password']))
             return redirect('blog:post_list')
     return render(request,'registration/sign_up.html',{'user_form':user_form})
+
+
+def add_to_favourite(request,post_id):
+    post=get_object_or_404(Post,id=post_id)
+    post.favourite.add(request.user)
+    return redirect('blog:post_detail', year=post.publish.year,
+                                        month=post.publish.month,
+                                        day=post.publish.day,
+                                        post=post.slug,
+                                        post_id=post.id)
+
+def delete_from_favourite(request,post_id):
+    post = get_object_or_404(Post, id=post_id)
+    post.favourite.remove(request.user)
+    return redirect('blog:post_detail', year=post.publish.year,
+                    month=post.publish.month,
+                    day=post.publish.day,
+                    post=post.slug,
+                    post_id=post.id)
+
+def delete_from_favourite_in_dashboard(request,post_id):
+    post = get_object_or_404(Post, id=post_id)
+    post.favourite.remove(request.user)
+    return  redirect('blog:favourite_posts')
+
+
+def favourite_posts(request):
+    return render(request,'blog/account/fav_posts.html',{})
