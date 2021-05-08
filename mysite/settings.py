@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 ROOT_URLCONF = 'mysite.urls'
@@ -88,9 +88,9 @@ DATABASES = {
     }
 }
 
-# import dj_database_url
-# db_from_env=dj_database_url.config()
-# DATABASES['default'].update(db_from_env)
+import dj_database_url
+db_from_env=dj_database_url.config()
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation
