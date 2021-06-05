@@ -17,17 +17,17 @@
             {% for p_p in post_points %}
                 <div class="col mb-4" >
                     <div class="card" style="height: 100%">
-                    {% if p_p.post_image %}
-                        <a href="{{ post.get_absolute_url }}">
-                            <img src="{{ MEDIA_URL }}{{ p_p.post_image.url }}"
-                                 class="card-img-top" alt="...">
-                        </a>
-                    {% else %}
-                         <a href="{{ post.get_absolute_url }}">
-                            <img src="https://thumbs.dreamstime.com/z/no-image-available-icon-photo-camera-flat-vector-illustration-132483296.jpg"
-                                 class="card-img-top" alt="...">
-                        </a>
-                    {% endif %}
+                        {% if p_p.post_image %}
+                            <a href="{{ post.get_absolute_url }}">
+                                <img src="{{ MEDIA_URL }}{{ p_p.post_image.url }}"
+                                     class="card-img-top" alt="...">
+                            </a>
+                        {% else %}
+                             <a href="{{ post.get_absolute_url }}">
+                                <img src="https://thumbs.dreamstime.com/z/no-image-available-icon-photo-camera-flat-vector-illustration-132483296.jpg"
+                                     class="card-img-top" alt="...">
+                            </a>
+                        {% endif %}
                         <div class="card-body">
                             <a href="#">
                                 <h5 class="card-title">
@@ -41,8 +41,9 @@
                         <div class="card-footer">
 
                             <a class="btn btn-primary m-2" href="{% url 'blog:post_point_edit' p_p.id %}">Редактировать</a>
-                            <a class="btn btn-danger m-2" href="{% url 'blog:post_point_delete' p_p.id %}">Удалить</a></div>
+                            <a class="btn btn-danger m-2" href="{% url 'blog:post_point_delete' p_p.id %}">Удалить</a>
                         </div>
+                    </div>
                 </div>
             {% endfor %}
         </div>

@@ -11,13 +11,20 @@ from slugify import slugify
 class Post(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Draft'),
-        ('published', 'Published'),
-    )
-    title = models.CharField(max_length=250, verbose_name='Название поста')
-    slug = models.SlugField(max_length=250, unique_for_date='publish')
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_posts', verbose_name='Автор')
-    short_description = models.CharField(max_length=400, verbose_name='Краткое описание')
-    publish = models.DateTimeField(default=timezone.now, verbose_name='Дата публикации')
+        ('published', 'Published'),)
+
+    title = models.CharField(max_length=250,
+                             verbose_name='Название поста')
+    slug = models.SlugField(max_length=250,
+                            unique_for_date='publish')
+    author = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               related_name='blog_posts',
+                               verbose_name='Автор')
+    short_description = models.CharField(max_length=400,
+                        verbose_name='Краткое описание')
+    publish = models.DateTimeField(default=timezone.now,
+                                   verbose_name='Дата публикации')
     created = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated = models.DateTimeField(auto_now=True, verbose_name='Дата изменения')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft', verbose_name='Статус публикации')
@@ -55,7 +62,7 @@ class PostPoint(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, default=None)
     post_point_header = models.CharField(max_length=250, default='HEADER')
     post_point_text = models.TextField(verbose_name='Текста пункта')
-    post_image = models.ImageField(upload_to=save_image, blank=True, verbose_name='Изображение пункта')
+    post_image = models.ImageField(upload_to=save_image, blank=True, verbose_name='Изображение пункта',width_field=400,height_field=400)
 
 
 class Comment(models.Model):

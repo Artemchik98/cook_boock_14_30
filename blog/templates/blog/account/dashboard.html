@@ -36,12 +36,13 @@
                                                 {% endfor %}
                                             </p>
 
-                                        <a class="btn btn-primary m-2"
-                                           href="{% url 'blog:post_point_list' post.id %}">
-                                            Этапы готовки
-                                        </a>
-                                        <a class="btn btn-primary m-2" href="{% url 'blog:post_edit' post.id %}">Редактировать</a>
-                                        <a class="btn btn-danger m-2" href="{% url 'blog:post_delete' post.id %}">Удалить</a></div>
+                                            <a class="btn btn-primary m-2"
+                                               href="{% url 'blog:post_point_list' post.id %}">
+                                                Этапы готовки
+                                            </a>
+                                            <a class="btn btn-primary m-2" href="{% url 'blog:post_edit' post.id %}">Редактировать</a>
+                                            <a class="btn btn-danger m-2" href="{% url 'blog:post_delete' post.id %}">Удалить</a>
+                                        </div>
                                     </div>
                                 </div>
                         {% endfor %}

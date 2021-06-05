@@ -1,8 +1,6 @@
 from django.contrib import admin
-
 # Register your models here.
 from .models import Post, PostPoint,Comment
-
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = ('id','title', 'slug', 'author', 'publish', 'status')
@@ -13,9 +11,8 @@ class PostAdmin(admin.ModelAdmin):
     date_hierarchy = 'publish'
     ordering = ('status', 'publish')
 
+
 admin.site.register(PostPoint)
-
-
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('name','email',

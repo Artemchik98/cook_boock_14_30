@@ -230,6 +230,7 @@ def post_point_list(request,post_id):
                 'post_points':post_points})
 
 
+
 @login_required
 def post_point_edit(request,post_point_id):
     post_point=get_object_or_404(PostPoint,id=post_point_id)

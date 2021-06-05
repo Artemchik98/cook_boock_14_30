@@ -1,6 +1,13 @@
-from django.urls import path
+from django.urls import path,include
 from . import views
 from  django.contrib.auth import views as auth_views
+from rest_framework import routers
+from .api import views as apiviews
+
+
+router=routers.DefaultRouter()
+router.register(r'posts',apiviews.PostViewSet)
+
 
 app_name = 'blog'
 urlpatterns = [
@@ -66,5 +73,11 @@ urlpatterns = [
          views.delete_from_favourite_in_dashboard,
          name='delete_from_favourite_in_dashboard'),
 
+    path('api/',include(router.urls)),
+
+    path('my_api/posts/',apiviews.PostList,
+         name='post_list'),
+    path('my_api/post/<pk>/',apiviews.PostDetail,
+         name='post_detail'),
 
 ]
