@@ -80,4 +80,7 @@ urlpatterns = [
     path('my_api/post/<pk>/',apiviews.PostDetail,
          name='post_detail'),
 
+    path('post-edit/<int:post_id>/', views.post_edit,
+         name='post_edit'),
+
 ]

@@ -7,8 +7,8 @@
     <div class="container text-center sign-in">
         {% if user_form.errors %}
             <p>{{ user_form.errors }}</p>
-                <p>Что-то забыл</p>
-        {% elif user_form.is_valid  %}
+            <p>Что-то забыл</p>
+        {% elif user_form.is_valid %}
             <h1 class="h3 mb-3 font-weight-normal">
                 Данные профиля успешно изменнены
             </h1>
@@ -19,8 +19,7 @@
             </h1>
         {% endif %}
         <form action="." class="form-sign-in login-form"
-              method="post" enctype="multipart/form-data"
-        >
+              method="post" enctype="multipart/form-data">
             {{ user_form.first_name|bootstrap }}
             {{ user_form.last_name|bootstrap }}
             {{ user_form.username|bootstrap }}
